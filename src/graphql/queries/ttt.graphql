@@ -1,0 +1,39 @@
+mutation CreateGame($playerChar: Int!, $opponentStart: Boolean!) {
+  createGame(playerChar: $player, opponentStart: $opponentStart) {
+    id
+    player
+    opponentStart
+    createdAt
+    allocated
+  }
+}
+
+mutation ServerCreateBoard($gameId: Int!, $board: String!) {
+  serverCreateBoard(gameId: $gameId, board: $board) {
+    id
+    board
+  }
+}
+
+mutation Move($gameId: Int!, $moveCell: Int!) {
+  move(gameId: $gameId, moveCell: $moveCell) {
+    id
+    gameId
+    moveCell
+    allocated
+  }
+}
+
+mutation ServerUpdateBoard($gameId: Int!, $board: String!) {
+  serverUpdateBoard(gameId: $gameId, board: $board) {
+    id
+    board
+  }
+}
+
+subscription GameUpdateById {
+  game_Update {
+    gameId
+    board
+  }
+}

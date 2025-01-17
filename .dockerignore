@@ -1,0 +1,17 @@
+node_modules
+.tmp/
+.cache/
+.git/
+dist/
+coverage/
+docker-compose.yml
+scratch.txt
+IntrospectionQuery.json
+IntrospectionQuery.graphql
+TTTService.hpp
+Dockerfile
+Dockerfile.dev
+api.http
+.env
+.env.local
+ttt.env
