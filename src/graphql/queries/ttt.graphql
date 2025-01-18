@@ -1,5 +1,5 @@
-mutation CreateGame($playerChar: Int!, $opponentStart: Boolean!) {
-  createGame(playerChar: $player, opponentStart: $opponentStart) {
+mutation CreateGame($player: Int!, $opponentStart: Boolean!) {
+  createGame(player: $player, opponentStart: $opponentStart) {
     id
     player
     opponentStart

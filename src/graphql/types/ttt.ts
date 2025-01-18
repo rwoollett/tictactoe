@@ -21,6 +21,7 @@ export const Game = objectType({
     t.nonNull.int('player')
     t.nonNull.string('board')
     t.nonNull.string('createdAt')
+    t.nonNull.boolean('opponentStart')
     t.nonNull.boolean('allocated', {
       description: "When found with query getCreateGame as findFirst this is marked true."
     }),

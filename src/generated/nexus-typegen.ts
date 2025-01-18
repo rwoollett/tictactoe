@@ -33,6 +33,7 @@ export interface NexusGenObjects {
     board: string; // String!
     createdAt: string; // String!
     id: number; // Int!
+    opponentStart: boolean; // Boolean!
     player: number; // Int!
     playerMoves: Array<NexusGenRootTypes['PlayerMove'] | null>; // [PlayerMove]!
   }
@@ -65,6 +66,7 @@ export interface NexusGenFieldTypes {
     board: string; // String!
     createdAt: string; // String!
     id: number; // Int!
+    opponentStart: boolean; // Boolean!
     player: number; // Int!
     playerMoves: Array<NexusGenRootTypes['PlayerMove'] | null>; // [PlayerMove]!
   }
@@ -93,6 +95,7 @@ export interface NexusGenFieldTypeNames {
     board: 'String'
     createdAt: 'String'
     id: 'Int'
+    opponentStart: 'Boolean'
     player: 'Int'
     playerMoves: 'PlayerMove'
   }

@@ -11,6 +11,7 @@ type Game {
   board: String!
   createdAt: String!
   id: Int!
+  opponentStart: Boolean!
   player: Int!
 
   """The players moves made against oppenent"""
