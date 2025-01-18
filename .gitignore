@@ -13,7 +13,7 @@ gol.env
 compose.env
 IntrospectionQuery.*
 !IntrospectionQuery.graphql
-GOLService.hpp
+TTTService.hpp
 
 # testing
 tmp.html
