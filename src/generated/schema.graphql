@@ -9,6 +9,7 @@ type Game {
   """When found with query getCreateGame as findFirst this is marked true."""
   allocated: Boolean!
   board: String!
+  createdAt: String!
   id: Int!
   player: Int!
 
@@ -18,7 +19,7 @@ type Game {
 
 type Mutation {
   createGame(opponentStart: Boolean!, player: Int!): Game!
-  removeGameComplete(genId: Int!): RemovalResult!
+  removeGameComplete(gameId: Int!): RemovalResult!
 }
 
 """The players moves in the Tic Tac Toe board against oppenent."""
@@ -31,7 +32,8 @@ type PlayerMove {
 }
 
 type Query {
-  ok: Boolean!
+  getNewBoard(nodeId: String!): [Game]
+  getPlayerMove(genId: Int!): [PlayerMove]
 }
 
 """Removal result."""

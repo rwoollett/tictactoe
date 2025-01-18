@@ -9,6 +9,7 @@ import {
 } from 'nexus';
 import { extendType } from 'nexus'
 import { Subjects } from '../../events';
+import { createGameResolver, getNewBoardResolver, removeGameCompleteResolver } from '../resolvers/ttt';
 
 /**
  * Game
@@ -19,6 +20,7 @@ export const Game = objectType({
     t.nonNull.int('id')
     t.nonNull.int('player')
     t.nonNull.string('board')
+    t.nonNull.string('createdAt')
     t.nonNull.boolean('allocated', {
       description: "When found with query getCreateGame as findFirst this is marked true."
     }),
@@ -48,26 +50,25 @@ export const PlayerMove = objectType({
 })
 
 
-// export const TTTQuery = extendType({
-//   type: 'Query',
-//   definition(t) {
-//     t.field('getNewBoard', {
-//       type: list('Board'),
-//       args: {
-//         nodeId: nonNull(stringArg()),
-//       },
-//       //resolve: getNewBoardResolver
-//     });
-//     t.field('getPlayerMove', {
-//       type: list('PlayerMove'),
-//       args: {
-//         genId: nonNull(intArg())
-//       },
-//       //resolve: getPlayerMoveResolver
-//     });
-//   },
-// });
-
+export const TTTQuery = extendType({
+  type: 'Query',
+  definition(t) {
+    t.field('getNewBoard', {
+      type: list('Game'),
+      args: {
+        nodeId: nonNull(stringArg()),
+      },
+      resolve: getNewBoardResolver
+    });
+    t.field('getPlayerMove', {
+      type: list('PlayerMove'),
+      args: {
+        genId: nonNull(intArg())
+      },
+      //resolve: getPlayerMoveResolver
+    });
+  },
+});
 
 export const RemovalResult = objectType({
   name: 'RemovalResult',
@@ -91,9 +92,9 @@ export const TTTMutations = extendType({
     t.nonNull.field('removeGameComplete', {
       type: 'RemovalResult',
       args: {
-        genId: nonNull(intArg())
+        gameId: nonNull(intArg())
       },
-     //resolve: removeGameCompleteResolver
+      resolve: removeGameCompleteResolver
     });
 
   },

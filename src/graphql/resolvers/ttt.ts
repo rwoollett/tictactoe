@@ -4,106 +4,116 @@ import { GameUpdateByIdEvent } from "../../events/gameUpdateByIdEvent";
 import { Subjects } from "../../events";
 
 /**
- * Task Manager role granted
+ * Create New Game 
+ * 
+ * The user post a mutation of createGame
+ * The id create in game table is used to identify the game to the back end node cstoken workers.
+ * The publish the game update to the game id.
+ * The return Game data has the id which is needed to subscribe to with board updates.
+ * 
+ * @returns Game 
  */
-let TMRole = false;
-const TASK_NEXT_TAKE = 4;
+
+export const createGameResolver: FieldResolver<
+  "Mutation", "createGame"
+> = async (_, { player, opponentStart }, { prisma }) => {
+
+  const newGame = await prisma.game.create({
+    data: {
+      player,
+      opponentStart
+    }
+  });
+
+  return {
+    id: newGame.id,
+    player,
+    opponentStart,
+    allocated: newGame.allocated,
+    board: newGame.board,
+    createdAt: newGame.createdAt ? newGame.createdAt.toISOString() : "",
+    playerMoves: []
+  }
+};
+
 
 /**
- * Get Task by generation id (genId)
+ * Get New Game 
  * 
- * Find the first task from a set of task with the genID and incremented row number.
- * When retrieved the ack field is updated to true. This task does not need to be found 
- * again. It will be processed by end user and posted back into TaskResult.
+ * Find the new game posted by a user.
+ * When retrieved the allocated field is updated to true. The new game post does not need to be found 
+ * again. It will be processed by the back end nodeId, and then posted back with ServerCreateBoard to
+ * enable the publish of this game id to the end user.
  *  
- * @param genId 
- * @param prisma 
  * @returns task 
  */
-// export const getNextTaskResolver: FieldResolver<
-//   "Query",
-//   "getNextTask"
-// > = async (_, { }, { prisma }) => {
+export const getNewBoardResolver: FieldResolver<
+  "Query",
+  "getNewBoard"
+> = async (_, { }, { prisma }) => {
 
-//   try {
-//     const task = await prisma.task.findFirst({
-//       select: {
-//         id: true,
-//         genId: true,
-//         row: true,
-//         length: true,
-//         allocated: true,
-//         rows: {
-//           select: {
-//             id: true,
-//             order: true,
-//             taskId: true,
-//             cols: true
-//           },
-//           orderBy: {
-//             order: 'asc'
-//           }
-//         }
-//       },
-//       where:
-//       {
-//         allocated: false
-//       },
-//       orderBy: [
-//         {
-//           row: 'asc'
-//         }
-//       ],
-//       //take: TASK_NEXT_TAKE
-//     });
+  try {
+    const game = await prisma.game.findFirst({
+      select: {
+        id: true,
+        allocated: true,
+      },
+      where:
+      {
+        allocated: false
+      },
+    });
 
-//     if (task) {
-//       //const taskIds = nextTasks.map(task => task.id);
-//       const updateTask = await prisma.task.update({
-//         select: {
-//           id: true,
-//           genId: true,
-//           row: true,
-//           length: true,
-//           allocated: true,
-//           rows: {
-//             select: {
-//               id: true,
-//               order: true,
-//               taskId: true,
-//               cols: true
-//             }
-//           }
-//         },
-//         data: {
-//           allocated: true
-//         },
-//         where: {
-//           id: task.id
-//         }
-//       });
-//       return [updateTask];
-//     } else {
-//       return [];
-//     }
+    if (game) {
+      const updateGame = await prisma.game.update({
+        select: {
+          id: true,
+          player: true,
+          opponentStart: true,
+          allocated: true,
+          createdAt: true,
+          board: true,
+          playerMoves: {
+            select: {
+              id: true,
+              gameId: true,
+              moveCell: true,
+              allocated: true
+            }
+          }
+        },
+        data: {
+          allocated: true
+        },
+        where: {
+          id: game.id
+        }
+      });
+      return [{
+        ...updateGame,
+        createdAt: updateGame.createdAt ? updateGame.createdAt.toISOString() : "",
+      }];
+    } else {
+      return [];
+    }
 
-//   } catch (error) {
-//     if (
-//       error instanceof PrismaClientKnownRequestError &&
-//       error.code == 'P2025'
-//     ) {
-//       console.log(
-//         '\u001b[1;31m' +
-//         'PrismaClientKnownRequestError is catched' +
-//         '(Error name: ' +
-//         error.name +
-//         ')' +
-//         '\u001b[0m'
-//       );
-//     }
-//     return [];
-//   };
-// };
+  } catch (error) {
+    if (
+      error instanceof PrismaClientKnownRequestError &&
+      error.code == 'P2025'
+    ) {
+      console.log(
+        '\u001b[1;31m' +
+        'PrismaClientKnownRequestError is catched' +
+        '(Error name: ' +
+        error.name +
+        ')' +
+        '\u001b[0m'
+      );
+    }
+    return [];
+  };
+};
 
 // export const getTaskResultByGenIDResolver: FieldResolver<
 //   "Query",
@@ -161,64 +171,25 @@ const TASK_NEXT_TAKE = 4;
 // };
 
 
-// export const postTaskResolver: FieldResolver<
-//   "Mutation", "postTask"
-// > = async (_, { genId, row, length, rows }, { prisma, pubsub }) => {
+export const removeGameCompleteResolver: FieldResolver<
+  "Mutation", "removeGameComplete"
+> = async (_, { gameId }, { prisma }) => {
 
-//   if (!TMRole) {
-//     throw new Error("Task Manager role not granted");
-//   }
+  const removeMany = await prisma.game.deleteMany({
+    where: {
+      id: gameId,
+      allocated: true
+    }
+  });
 
-//   const newTask = await prisma.task.create({
-//     data: {
-//       genId,
-//       row,
-//       length,
-//     }
-//   });
+  const removeManyResult = await prisma.playerMove.deleteMany({
+    where: {
+      gameId: gameId
+    }
+  });
 
-//   const boardRows = rows.data.map(async (cols, index) => {
-
-//     const boardRow = await prisma.boardRow.create({
-//       data: {
-//         order: index,
-//         taskId: newTask.id,
-//         cols: [...cols]
-//       }
-//     });
-//     return boardRow;
-//   });
-
-//   return {
-//     id: newTask.id,
-//     genId,
-//     row,
-//     length,
-//     allocated: newTask.allocated,
-//     rows: boardRows
-//   }
-// };
-
-
-// export const removeTaskCompleteResolver: FieldResolver<
-//   "Mutation", "removeTaskComplete"
-// > = async (_, { genId }, { prisma }) => {
-
-//   const removeMany = await prisma.task.deleteMany({
-//     where: {
-//       genId: genId,
-//       allocated: true
-//     }
-//   });
-
-//   const removeManyResult = await prisma.taskResult.deleteMany({
-//     where: {
-//       genId: genId
-//     }
-//   });
-
-//   return { message: `Removed ${removeMany.count + removeManyResult.count} records successfully` };
-// };
+  return { message: `Removed ${removeMany.count + removeManyResult.count} records successfully` };
+};
 
 
 // export const postBoardByGenIDResolver: FieldResolver<
