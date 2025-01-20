@@ -28,6 +28,10 @@ export interface NexusGenScalars {
 }
 
 export interface NexusGenObjects {
+  BoardOutput: { // root type
+    board: string; // String!
+    gameId: number; // Int!
+  }
   Game: { // root type
     allocated: boolean; // Boolean!
     board: string; // String!
@@ -48,6 +52,7 @@ export interface NexusGenObjects {
   RemovalResult: { // root type
     message: string; // String!
   }
+  Subscription: {};
 }
 
 export interface NexusGenInterfaces {
@@ -61,6 +66,10 @@ export type NexusGenRootTypes = NexusGenObjects
 export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars
 
 export interface NexusGenFieldTypes {
+  BoardOutput: { // field return type
+    board: string; // String!
+    gameId: number; // Int!
+  }
   Game: { // field return type
     allocated: boolean; // Boolean!
     board: string; // String!
@@ -73,6 +82,7 @@ export interface NexusGenFieldTypes {
   Mutation: { // field return type
     createGame: NexusGenRootTypes['Game']; // Game!
     removeGameComplete: NexusGenRootTypes['RemovalResult']; // RemovalResult!
+    serverCreateBoard: NexusGenRootTypes['Game']; // Game!
   }
   PlayerMove: { // field return type
     allocated: boolean; // Boolean!
@@ -87,9 +97,16 @@ export interface NexusGenFieldTypes {
   RemovalResult: { // field return type
     message: string; // String!
   }
+  Subscription: { // field return type
+    game_Update: NexusGenRootTypes['BoardOutput'] | null; // BoardOutput
+  }
 }
 
 export interface NexusGenFieldTypeNames {
+  BoardOutput: { // field return type name
+    board: 'String'
+    gameId: 'Int'
+  }
   Game: { // field return type name
     allocated: 'Boolean'
     board: 'String'
@@ -102,6 +119,7 @@ export interface NexusGenFieldTypeNames {
   Mutation: { // field return type name
     createGame: 'Game'
     removeGameComplete: 'RemovalResult'
+    serverCreateBoard: 'Game'
   }
   PlayerMove: { // field return type name
     allocated: 'Boolean'
@@ -116,6 +134,9 @@ export interface NexusGenFieldTypeNames {
   RemovalResult: { // field return type name
     message: 'String'
   }
+  Subscription: { // field return type name
+    game_Update: 'BoardOutput'
+  }
 }
 
 export interface NexusGenArgTypes {
@@ -125,6 +146,10 @@ export interface NexusGenArgTypes {
       player: number; // Int!
     }
     removeGameComplete: { // args
+      gameId: number; // Int!
+    }
+    serverCreateBoard: { // args
+      board: string; // String!
       gameId: number; // Int!
     }
   }

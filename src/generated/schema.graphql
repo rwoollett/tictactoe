@@ -2,6 +2,12 @@
 ### Do not make changes to this file directly
 
 
+"""A board update of tictactoe"""
+type BoardOutput {
+  board: String!
+  gameId: Int!
+}
+
 """
 Tic Tac Toes game board. The player can play as Nought(1) or Cross(2). O is empty cell.
 """
@@ -21,6 +27,7 @@ type Game {
 type Mutation {
   createGame(opponentStart: Boolean!, player: Int!): Game!
   removeGameComplete(gameId: Int!): RemovalResult!
+  serverCreateBoard(board: String!, gameId: Int!): Game!
 }
 
 """The players moves in the Tic Tac Toe board against oppenent."""
@@ -40,4 +47,8 @@ type Query {
 """Removal result."""
 type RemovalResult {
   message: String!
+}
+
+type Subscription {
+  game_Update: BoardOutput
 }

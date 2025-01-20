@@ -9,7 +9,7 @@ import {
 } from 'nexus';
 import { extendType } from 'nexus'
 import { Subjects } from '../../events';
-import { createGameResolver, getNewBoardResolver, removeGameCompleteResolver } from '../resolvers/ttt';
+import { createGameResolver, getNewBoardResolver, removeGameCompleteResolver, serverCreateBoardResolver, subcribeBoardByGameIdResolver } from '../resolvers/ttt';
 
 /**
  * Game
@@ -90,6 +90,14 @@ export const TTTMutations = extendType({
       },
       resolve: createGameResolver
     });
+    t.nonNull.field('serverCreateBoard', {
+      type: 'Game',
+      args: {
+        gameId: nonNull(intArg()),
+        board: nonNull(stringArg())
+      },
+      resolve: serverCreateBoardResolver
+    });
     t.nonNull.field('removeGameComplete', {
       type: 'RemovalResult',
       args: {
@@ -101,18 +109,27 @@ export const TTTMutations = extendType({
   },
 })
 
-// export const Subscription = extendType({
-//   type: "Subscription",
-//   definition(t) {
-//     t.field(Subjects.GameUpdateById, {
-//       type: 'BoardOutput',
-//       subscribe(_root, _args, ctx) {
-//         return ctx.pubsub.asyncIterator(Subjects.GameUpdateById)
-//       },
-//       resolve: subcribeBoardGenerateResolver
-//     });
+export const BoardOutput = objectType({
+  name: 'BoardOutput',
+  definition(t) {
+    t.nonNull.int('gameId')
+    t.nonNull.string('board')
+  },
+  description: "A board update of tictactoe"
+});
 
-//   },
-// });
+export const Subscription = extendType({
+  type: "Subscription",
+  definition(t) {
+    t.field(Subjects.GameUpdateById, {
+      type: 'BoardOutput',
+      subscribe(_root, _args, ctx) {
+        return ctx.pubsub.asyncIterator(Subjects.GameUpdateById)
+      },
+      resolve: subcribeBoardByGameIdResolver
+    });
+
+  },
+});
 
 

@@ -115,6 +115,104 @@ export const getNewBoardResolver: FieldResolver<
   };
 };
 
+/**
+ * Create New Board for Game by GameId 
+ * 
+ * The server post a mutation of createBoardGame
+ * The id create in game table is used to identify the game to the back end node cstoken workers.
+ * This publishes the game update as a subscription to end user - who has the game id.
+ * 
+ * @returns Game 
+ */
+
+export const serverCreateBoardResolver: FieldResolver<
+  "Mutation", "serverCreateBoard"
+> = async (_, { gameId, board }, { prisma, pubsub }) => {
+
+  try {
+    const game = await prisma.game.findFirst({
+      select: {
+        id: true,
+        allocated: true,
+      },
+      where:
+      {
+        allocated: true,
+        id: gameId
+      },
+    });
+
+    if (game) {
+      const updateGame = await prisma.game.update({
+        select: {
+          id: true,
+          player: true,
+          opponentStart: true,
+          allocated: true,
+          createdAt: true,
+          board: true,
+          playerMoves: {
+            select: {
+              id: true,
+              gameId: true,
+              moveCell: true,
+              allocated: true
+            }
+          }
+        },
+        data: {
+          allocated: true,
+          board: '0,0,0,0,0,0,0,0,0'
+        },
+        where: {
+          id: game.id
+        }
+      });
+
+      pubsub && pubsub.publish(Subjects.GameUpdateById,
+        {
+          subject: Subjects.GameUpdateById,
+          data: { gameId, board }
+        } as GameUpdateByIdEvent);
+
+      return {
+        ...updateGame,
+        createdAt: updateGame.createdAt ? updateGame.createdAt.toISOString() : "",
+      };
+    } else {
+      throw new Error(`Game Id not found: ${gameId}. Could not publish a new board.`);
+    }
+
+  } catch (error) {
+    if (
+      error instanceof PrismaClientKnownRequestError &&
+      error.code == 'P2025'
+    ) {
+      console.log(
+        '\u001b[1;31m' +
+        'PrismaClientKnownRequestError is catched' +
+        '(Error name: ' +
+        error.name +
+        ')' +
+        '\u001b[0m'
+      );
+    }
+    throw new Error(`Game Id not found: ${gameId}. Could not publish a new board.`);
+  };
+};
+
+/**
+ * Subscribe to board updates by game id
+ * 
+ * @returns Board 
+ */
+export const subcribeBoardByGameIdResolver = (payload: GameUpdateByIdEvent) => {
+  const { data: { gameId, board } } = payload;
+  return { gameId, board };
+};
+
+
+
 // export const getTaskResultByGenIDResolver: FieldResolver<
 //   "Query",
 //   "getTaskResultByGenID"

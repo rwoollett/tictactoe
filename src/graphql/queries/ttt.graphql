@@ -8,6 +8,19 @@ mutation CreateGame($player: Int!, $opponentStart: Boolean!) {
   }
 }
 
+query GetNewBoard($nodeId: String!) {
+  getNewBoard(nodeId: $nodeId) {
+    allocated
+    createdAt
+    id
+    player
+    board
+    playerMoves {
+      gameId
+    }
+  }
+}
+
 mutation ServerCreateBoard($gameId: Int!, $board: String!) {
   serverCreateBoard(gameId: $gameId, board: $board) {
     id
