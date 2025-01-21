@@ -116,17 +116,17 @@ export const getNewBoardResolver: FieldResolver<
 };
 
 /**
- * Create New Board for Game by GameId 
+ * Create/Update Board for Game by GameId 
  * 
- * The server post a mutation of createBoardGame
+ * The server post a mutation of updateBoardGame
  * The id create in game table is used to identify the game to the back end node cstoken workers.
  * This publishes the game update as a subscription to end user - who has the game id.
  * 
  * @returns Game 
  */
 
-export const serverCreateBoardResolver: FieldResolver<
-  "Mutation", "serverCreateBoard"
+export const serverUpdateBoardResolver: FieldResolver<
+  "Mutation", "serverUpdateBoard"
 > = async (_, { gameId, board }, { prisma, pubsub }) => {
 
   try {
@@ -162,7 +162,7 @@ export const serverCreateBoardResolver: FieldResolver<
         },
         data: {
           allocated: true,
-          board: '0,0,0,0,0,0,0,0,0'
+          board: board
         },
         where: {
           id: game.id

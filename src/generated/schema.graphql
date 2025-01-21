@@ -28,7 +28,7 @@ type Mutation {
   boardMove(gameId: Int!, moveCell: Int!): PlayerMove!
   createGame(opponentStart: Boolean!, player: Int!): Game!
   removeGameComplete(gameId: Int!): RemovalResult!
-  serverCreateBoard(board: String!, gameId: Int!): Game!
+  serverUpdateBoard(board: String!, gameId: Int!): Game!
 }
 
 """The players moves in the Tic Tac Toe board against oppenent."""

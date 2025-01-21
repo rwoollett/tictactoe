@@ -9,7 +9,13 @@ import {
 } from 'nexus';
 import { extendType } from 'nexus'
 import { Subjects } from '../../events';
-import { boardMoveResolver, createGameResolver, getNewBoardResolver, getPlayerMoveResolver, removeGameCompleteResolver, serverCreateBoardResolver, subcribeBoardByGameIdResolver } from '../resolvers/ttt';
+import {
+  boardMoveResolver, createGameResolver,
+  getNewBoardResolver, getPlayerMoveResolver,
+  removeGameCompleteResolver,
+  serverUpdateBoardResolver,
+  subcribeBoardByGameIdResolver
+} from '../resolvers/ttt';
 
 /**
  * Game
@@ -25,10 +31,10 @@ export const Game = objectType({
     t.nonNull.boolean('allocated', {
       description: "When found with query getCreateGame as findFirst this is marked true."
     }),
-    t.nonNull.list.field('playerMoves', {
-      type: 'PlayerMove',
-      description: "The players moves made against oppenent"
-    })
+      t.nonNull.list.field('playerMoves', {
+        type: 'PlayerMove',
+        description: "The players moves made against oppenent"
+      })
 
   },
   description: "Tic Tac Toes game board. The player can play as Nought(1) or Cross(2). O is empty cell."
@@ -90,13 +96,13 @@ export const TTTMutations = extendType({
       },
       resolve: createGameResolver
     });
-    t.nonNull.field('serverCreateBoard', {
+    t.nonNull.field('serverUpdateBoard', {
       type: 'Game',
       args: {
         gameId: nonNull(intArg()),
         board: nonNull(stringArg())
       },
-      resolve: serverCreateBoardResolver
+      resolve: serverUpdateBoardResolver
     });
     t.nonNull.field('boardMove', {
       type: 'PlayerMove',

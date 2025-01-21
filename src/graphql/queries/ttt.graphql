@@ -21,12 +21,6 @@ query GetNewBoard($nodeId: String!) {
   }
 }
 
-mutation ServerCreateBoard($gameId: Int!, $board: String!) {
-  serverCreateBoard(gameId: $gameId, board: $board) {
-    id
-    board
-  }
-}
 
 mutation BoardMove($gameId: Int!, $moveCell: Int!) {
   boardMove(gameId: $gameId, moveCell: $moveCell) {
@@ -44,6 +38,13 @@ query GetPlayerMove($nodeId: String!) {
     allocated
   }
 }
+
+# mutation ServerCreateBoard($gameId: Int!, $board: String!) {
+#   serverCreateBoard(gameId: $gameId, board: $board) {
+#     id
+#     board
+#   }
+# }
 
 mutation ServerUpdateBoard($gameId: Int!, $board: String!) {
   serverUpdateBoard(gameId: $gameId, board: $board) {
