@@ -211,7 +211,104 @@ export const subcribeBoardByGameIdResolver = (payload: GameUpdateByIdEvent) => {
   return { gameId, board };
 };
 
+/**
+ * Make Player Move 
+ * 
+ * The user post a mutation of boardMove
+ * The id create in game table is used to identify the game to the back end node cstoken workers.
+ * The publish the game update to the game id.
+ * The return Game data has the id which is needed to subscribe to with board updates.
+ * 
+ * @returns Game 
+ */
 
+export const boardMoveResolver: FieldResolver<
+  "Mutation", "boardMove"
+> = async (_, { gameId, moveCell }, { prisma }) => {
+
+  const newMove = await prisma.playerMove.create({
+    data: {
+      gameId,
+      moveCell
+    }
+  });
+
+  return {
+    id: newMove.id,
+    allocated: newMove.allocated,
+    moveCell: newMove.moveCell,
+    gameId: newMove.gameId
+  }
+};
+
+/**
+ * Get Players Board Move 
+ * 
+ * Find the board moves posted by a user.
+ * When retrieved the allocated field is updated to true. 
+ * It will be processed by the back end nodeId, and then posted back with ServerUpdateBoard
+ * to enable the publish of this game id to the end user.
+ *  
+ * @returns PlayerMove 
+ */
+export const getPlayerMoveResolver: FieldResolver<
+  "Query",
+  "getPlayerMove"
+> = async (_, { }, { prisma }) => {
+
+  try {
+    const move = await prisma.playerMove.findFirst({
+      select: {
+        id: true,
+        allocated: true,
+        gameId: true,
+        moveCell: true
+      },
+      where:
+      {
+        allocated: false
+      },
+    });
+
+    if (move) {
+      const updateMove = await prisma.playerMove.update({
+        select: {
+          id: true,
+          allocated: true,
+          gameId: true,
+          moveCell: true
+        },
+        data: {
+          allocated: true
+        },
+        where: {
+          id: move.id
+        }
+      });
+      return [{
+        ...updateMove
+      }];
+    } else {
+      return [];
+    }
+
+  } catch (error) {
+    if (
+      error instanceof PrismaClientKnownRequestError &&
+      error.code == 'P2025'
+    ) {
+      console.log(
+        '\u001b[1;31m' +
+        'PrismaClientKnownRequestError is catched' +
+        '(Error name: ' +
+        error.name +
+        ')' +
+        '\u001b[0m'
+      );
+    }
+    return [];
+  };
+};
 
 // export const getTaskResultByGenIDResolver: FieldResolver<
 //   "Query",

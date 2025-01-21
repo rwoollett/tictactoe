@@ -28,9 +28,17 @@ mutation ServerCreateBoard($gameId: Int!, $board: String!) {
   }
 }
 
-mutation Move($gameId: Int!, $moveCell: Int!) {
-  move(gameId: $gameId, moveCell: $moveCell) {
+mutation BoardMove($gameId: Int!, $moveCell: Int!) {
+  boardMove(gameId: $gameId, moveCell: $moveCell) {
     id
+    gameId
+    moveCell
+    allocated
+  }
+}
+
+query GetPlayerMove($nodeId: String!) {
+  getPlayerMove(nodeId: $nodeId) {
     gameId
     moveCell
     allocated

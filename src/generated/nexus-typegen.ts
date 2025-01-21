@@ -80,6 +80,7 @@ export interface NexusGenFieldTypes {
     playerMoves: Array<NexusGenRootTypes['PlayerMove'] | null>; // [PlayerMove]!
   }
   Mutation: { // field return type
+    boardMove: NexusGenRootTypes['PlayerMove']; // PlayerMove!
     createGame: NexusGenRootTypes['Game']; // Game!
     removeGameComplete: NexusGenRootTypes['RemovalResult']; // RemovalResult!
     serverCreateBoard: NexusGenRootTypes['Game']; // Game!
@@ -117,6 +118,7 @@ export interface NexusGenFieldTypeNames {
     playerMoves: 'PlayerMove'
   }
   Mutation: { // field return type name
+    boardMove: 'PlayerMove'
     createGame: 'Game'
     removeGameComplete: 'RemovalResult'
     serverCreateBoard: 'Game'
@@ -141,6 +143,10 @@ export interface NexusGenFieldTypeNames {
 
 export interface NexusGenArgTypes {
   Mutation: {
+    boardMove: { // args
+      gameId: number; // Int!
+      moveCell: number; // Int!
+    }
     createGame: { // args
       opponentStart: boolean; // Boolean!
       player: number; // Int!
@@ -158,7 +164,7 @@ export interface NexusGenArgTypes {
       nodeId: string; // String!
     }
     getPlayerMove: { // args
-      genId: number; // Int!
+      nodeId: string; // String!
     }
   }
 }

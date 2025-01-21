@@ -25,6 +25,7 @@ type Game {
 }
 
 type Mutation {
+  boardMove(gameId: Int!, moveCell: Int!): PlayerMove!
   createGame(opponentStart: Boolean!, player: Int!): Game!
   removeGameComplete(gameId: Int!): RemovalResult!
   serverCreateBoard(board: String!, gameId: Int!): Game!
@@ -41,7 +42,7 @@ type PlayerMove {
 
 type Query {
   getNewBoard(nodeId: String!): [Game]
-  getPlayerMove(genId: Int!): [PlayerMove]
+  getPlayerMove(nodeId: String!): [PlayerMove]
 }
 
 """Removal result."""

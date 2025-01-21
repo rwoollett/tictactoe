@@ -9,7 +9,7 @@ import {
 } from 'nexus';
 import { extendType } from 'nexus'
 import { Subjects } from '../../events';
-import { createGameResolver, getNewBoardResolver, removeGameCompleteResolver, serverCreateBoardResolver, subcribeBoardByGameIdResolver } from '../resolvers/ttt';
+import { boardMoveResolver, createGameResolver, getNewBoardResolver, getPlayerMoveResolver, removeGameCompleteResolver, serverCreateBoardResolver, subcribeBoardByGameIdResolver } from '../resolvers/ttt';
 
 /**
  * Game
@@ -64,9 +64,9 @@ export const TTTQuery = extendType({
     t.field('getPlayerMove', {
       type: list('PlayerMove'),
       args: {
-        genId: nonNull(intArg())
+        nodeId: nonNull(stringArg())
       },
-      //resolve: getPlayerMoveResolver
+      resolve: getPlayerMoveResolver
     });
   },
 });
@@ -97,6 +97,14 @@ export const TTTMutations = extendType({
         board: nonNull(stringArg())
       },
       resolve: serverCreateBoardResolver
+    });
+    t.nonNull.field('boardMove', {
+      type: 'PlayerMove',
+      args: {
+        gameId: nonNull(intArg()),
+        moveCell: nonNull(intArg())
+      },
+      resolve: boardMoveResolver
     });
     t.nonNull.field('removeGameComplete', {
       type: 'RemovalResult',
