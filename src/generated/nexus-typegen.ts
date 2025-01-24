@@ -167,6 +167,11 @@ export interface NexusGenArgTypes {
       nodeId: string; // String!
     }
   }
+  Subscription: {
+    game_Update: { // args
+      gameId: number; // Int!
+    }
+  }
 }
 
 export interface NexusGenAbstractTypeMembers {

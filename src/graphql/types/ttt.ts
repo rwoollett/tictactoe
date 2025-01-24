@@ -8,7 +8,7 @@ import {
   stringArg,
 } from 'nexus';
 import { extendType } from 'nexus'
-import { Subjects } from '../../events';
+import { GameUpdateByIdEvent, Subjects } from '../../events';
 import {
   boardMoveResolver, createGameResolver,
   getNewBoardResolver, getPlayerMoveResolver,
@@ -16,6 +16,7 @@ import {
   serverUpdateBoardResolver,
   subcribeBoardByGameIdResolver
 } from '../resolvers/ttt';
+import { withFilter } from 'graphql-subscriptions';
 
 /**
  * Game
@@ -137,13 +138,37 @@ export const Subscription = extendType({
   definition(t) {
     t.field(Subjects.GameUpdateById, {
       type: 'BoardOutput',
-      subscribe(_root, _args, ctx) {
-        return ctx.pubsub.asyncIterator(Subjects.GameUpdateById)
+      args: {
+        gameId: nonNull(intArg())
       },
+      // subscribe(_root, _args, ctx) {
+      //   return ctx.pubsub.asyncIterator(Subjects.GameUpdateById)
+      // },
+      subscribe: withFilter(
+        (_root, _args, ctx) => ctx.pubsub.asyncIterator(Subjects.GameUpdateById),
+        (msg: GameUpdateByIdEvent, variables) => {
+          return (
+            msg.data.gameId === variables.gameId
+          );
+        }),
       resolve: subcribeBoardByGameIdResolver
     });
 
   },
 });
+
+// export const Subscription = extendType({
+//   type: "Subscription",
+//   definition(t) {
+//     t.field(Subjects.GameUpdateById, {
+//       type: 'BoardOutput',
+//       subscribe(_root, _args, ctx) {
+//         return ctx.pubsub.asyncIterator(Subjects.GameUpdateById)
+//       },
+//       resolve: subcribeBoardByGameIdResolver
+//     });
+
+//   },
+// });
 
 
