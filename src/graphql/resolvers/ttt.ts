@@ -29,7 +29,7 @@ export const createGameResolver: FieldResolver<
     userId,
     board: newGame.board,
     createdAt: newGame.createdAt ? newGame.createdAt.toISOString() : "",
-    playerMoves: []
+    //playerMoves: []
   }
 };
 
@@ -146,13 +146,24 @@ export const boardMoveResolver: FieldResolver<
       gameId,
       player,
       moveCell
+    },
+    select: {
+      id: true,
+      allocated: true,
+      game: true
     }
   });
 
   return {
     id: newMove.id,
     allocated: newMove.allocated,
-    gameId, player, moveCell
+    gameId, player, moveCell,
+    game: {
+      id: newMove.game.id,
+      board: newMove.game.board,
+      userId: newMove.game.userId,
+      createdAt: newMove.game.createdAt ? newMove.game.createdAt.toISOString() : ""
+    }
   }
 };
 
@@ -175,10 +186,11 @@ export const getPlayerMoveResolver: FieldResolver<
     const move = await prisma.playerMove.findFirst({
       select: {
         id: true,
-        allocated: true,
-        gameId: true,
-        player: true,
-        moveCell: true
+        allocated: true
+        // gameId: true,
+        // player: true,
+        // moveCell: true,
+        // game: true
       },
       where:
       {
@@ -193,7 +205,15 @@ export const getPlayerMoveResolver: FieldResolver<
           allocated: true,
           gameId: true,
           player: true,
-          moveCell: true
+          moveCell: true,
+          game: {
+            select: {
+              board: true,
+              userId: true,
+              id: true,
+              createdAt: true
+            }
+          }
         },
         data: {
           allocated: true
@@ -203,7 +223,11 @@ export const getPlayerMoveResolver: FieldResolver<
         }
       });
       return [{
-        ...updateMove
+        ...updateMove,
+        game: {
+          ...updateMove.game,
+          createdAt: updateMove.game.createdAt ? updateMove.game.createdAt.toISOString() : ""
+        }
       }];
     } else {
       return [];

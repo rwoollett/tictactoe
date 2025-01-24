@@ -15,9 +15,6 @@ type Game {
   board: String!
   createdAt: String!
   id: Int!
-
-  """The players moves made against oppenent"""
-  playerMoves: [PlayerMove]!
   userId: Int!
 }
 
@@ -32,6 +29,7 @@ type Mutation {
 type PlayerMove {
   """When found with query getPlayerMove as findFirst this is marked true."""
   allocated: Boolean!
+  game: Game!
   gameId: Int!
   id: Int!
   moveCell: Int!

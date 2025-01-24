@@ -36,12 +36,12 @@ export interface NexusGenObjects {
     board: string; // String!
     createdAt: string; // String!
     id: number; // Int!
-    playerMoves: Array<NexusGenRootTypes['PlayerMove'] | null>; // [PlayerMove]!
     userId: number; // Int!
   }
   Mutation: {};
   PlayerMove: { // root type
     allocated: boolean; // Boolean!
+    game: NexusGenRootTypes['Game']; // Game!
     gameId: number; // Int!
     id: number; // Int!
     moveCell: number; // Int!
@@ -73,7 +73,6 @@ export interface NexusGenFieldTypes {
     board: string; // String!
     createdAt: string; // String!
     id: number; // Int!
-    playerMoves: Array<NexusGenRootTypes['PlayerMove'] | null>; // [PlayerMove]!
     userId: number; // Int!
   }
   Mutation: { // field return type
@@ -84,6 +83,7 @@ export interface NexusGenFieldTypes {
   }
   PlayerMove: { // field return type
     allocated: boolean; // Boolean!
+    game: NexusGenRootTypes['Game']; // Game!
     gameId: number; // Int!
     id: number; // Int!
     moveCell: number; // Int!
@@ -109,7 +109,6 @@ export interface NexusGenFieldTypeNames {
     board: 'String'
     createdAt: 'String'
     id: 'Int'
-    playerMoves: 'PlayerMove'
     userId: 'Int'
   }
   Mutation: { // field return type name
@@ -120,6 +119,7 @@ export interface NexusGenFieldTypeNames {
   }
   PlayerMove: { // field return type name
     allocated: 'Boolean'
+    game: 'Game'
     gameId: 'Int'
     id: 'Int'
     moveCell: 'Int'

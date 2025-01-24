@@ -27,10 +27,10 @@ export const Game = objectType({
     t.nonNull.int('userId')
     t.nonNull.string('board')
     t.nonNull.string('createdAt')
-    t.nonNull.list.field('playerMoves', {
-      type: 'PlayerMove',
-      description: "The players moves made against oppenent"
-    })
+    // t.nonNull.list.field('playerMoves', {
+    //   type: 'PlayerMove',
+    //   description: "The players moves made against oppenent"
+    // })
   },
   description: "Tic Tac Toes game board. The player can play as Nought(1) or Cross(2). O is empty cell."
 });
@@ -48,6 +48,7 @@ export const PlayerMove = objectType({
     t.nonNull.boolean('allocated', {
       description: "When found with query getPlayerMove as findFirst this is marked true."
     })
+    t.nonNull.field('game', { type: 'Game'})
   },
   description: "The players moves in the Tic Tac Toe board against oppenent."
 })
