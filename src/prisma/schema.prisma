@@ -9,9 +9,7 @@ datasource db {
 
 model Game {
   id            Int          @id @default(autoincrement())
-  player        Int          @default(1)
-  opponentStart Boolean      @default(true)
-  allocated     Boolean      @default(false)
+  userId        Int          @default(1)
   board         String       @default("0,0,0,0,0,0,0,0,0")
   createdAt     DateTime     @default(now())
   playerMoves   PlayerMove[]
@@ -20,6 +18,7 @@ model Game {
 model PlayerMove {
   id        Int     @id @default(autoincrement())
   gameId    Int
+  player    Int     @default(1)
   moveCell  Int
   allocated Boolean @default(false)
   game      Game    @relation(fields: [gameId], references: [id], onDelete: Cascade)

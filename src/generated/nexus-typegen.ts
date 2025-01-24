@@ -33,13 +33,11 @@ export interface NexusGenObjects {
     gameId: number; // Int!
   }
   Game: { // root type
-    allocated: boolean; // Boolean!
     board: string; // String!
     createdAt: string; // String!
     id: number; // Int!
-    opponentStart: boolean; // Boolean!
-    player: number; // Int!
     playerMoves: Array<NexusGenRootTypes['PlayerMove'] | null>; // [PlayerMove]!
+    userId: number; // Int!
   }
   Mutation: {};
   PlayerMove: { // root type
@@ -47,6 +45,7 @@ export interface NexusGenObjects {
     gameId: number; // Int!
     id: number; // Int!
     moveCell: number; // Int!
+    player: number; // Int!
   }
   Query: {};
   RemovalResult: { // root type
@@ -71,13 +70,11 @@ export interface NexusGenFieldTypes {
     gameId: number; // Int!
   }
   Game: { // field return type
-    allocated: boolean; // Boolean!
     board: string; // String!
     createdAt: string; // String!
     id: number; // Int!
-    opponentStart: boolean; // Boolean!
-    player: number; // Int!
     playerMoves: Array<NexusGenRootTypes['PlayerMove'] | null>; // [PlayerMove]!
+    userId: number; // Int!
   }
   Mutation: { // field return type
     boardMove: NexusGenRootTypes['PlayerMove']; // PlayerMove!
@@ -90,6 +87,7 @@ export interface NexusGenFieldTypes {
     gameId: number; // Int!
     id: number; // Int!
     moveCell: number; // Int!
+    player: number; // Int!
   }
   Query: { // field return type
     getPlayerMove: Array<NexusGenRootTypes['PlayerMove'] | null> | null; // [PlayerMove]
@@ -108,13 +106,11 @@ export interface NexusGenFieldTypeNames {
     gameId: 'Int'
   }
   Game: { // field return type name
-    allocated: 'Boolean'
     board: 'String'
     createdAt: 'String'
     id: 'Int'
-    opponentStart: 'Boolean'
-    player: 'Int'
     playerMoves: 'PlayerMove'
+    userId: 'Int'
   }
   Mutation: { // field return type name
     boardMove: 'PlayerMove'
@@ -127,6 +123,7 @@ export interface NexusGenFieldTypeNames {
     gameId: 'Int'
     id: 'Int'
     moveCell: 'Int'
+    player: 'Int'
   }
   Query: { // field return type name
     getPlayerMove: 'PlayerMove'
@@ -144,10 +141,10 @@ export interface NexusGenArgTypes {
     boardMove: { // args
       gameId: number; // Int!
       moveCell: number; // Int!
+      player: number; // Int!
     }
     createGame: { // args
-      opponentStart: boolean; // Boolean!
-      player: number; // Int!
+      userId: number; // Int!
     }
     removeGameComplete: { // args
       gameId: number; // Int!

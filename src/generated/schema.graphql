@@ -12,21 +12,18 @@ type BoardOutput {
 Tic Tac Toes game board. The player can play as Nought(1) or Cross(2). O is empty cell.
 """
 type Game {
-  """When found with query getCreateGame as findFirst this is marked true."""
-  allocated: Boolean!
   board: String!
   createdAt: String!
   id: Int!
-  opponentStart: Boolean!
-  player: Int!
 
   """The players moves made against oppenent"""
   playerMoves: [PlayerMove]!
+  userId: Int!
 }
 
 type Mutation {
-  boardMove(gameId: Int!, moveCell: Int!): PlayerMove!
-  createGame(opponentStart: Boolean!, player: Int!): Game!
+  boardMove(gameId: Int!, moveCell: Int!, player: Int!): PlayerMove!
+  createGame(userId: Int!): Game!
   removeGameComplete(gameId: Int!): RemovalResult!
   serverUpdateBoard(board: String!, gameId: Int!): Game!
 }
@@ -38,6 +35,7 @@ type PlayerMove {
   gameId: Int!
   id: Int!
   moveCell: Int!
+  player: Int!
 }
 
 type Query {

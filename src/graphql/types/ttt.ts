@@ -1,7 +1,5 @@
 import {
-  inputObjectType,
   intArg,
-  booleanArg,
   list,
   nonNull,
   objectType,
@@ -26,18 +24,13 @@ export const Game = objectType({
   name: 'Game',
   definition(t) {
     t.nonNull.int('id')
-    t.nonNull.int('player')
+    t.nonNull.int('userId')
     t.nonNull.string('board')
     t.nonNull.string('createdAt')
-    t.nonNull.boolean('opponentStart')
-    t.nonNull.boolean('allocated', {
-      description: "When found with query getCreateGame as findFirst this is marked true."
-    }),
-      t.nonNull.list.field('playerMoves', {
-        type: 'PlayerMove',
-        description: "The players moves made against oppenent"
-      })
-
+    t.nonNull.list.field('playerMoves', {
+      type: 'PlayerMove',
+      description: "The players moves made against oppenent"
+    })
   },
   description: "Tic Tac Toes game board. The player can play as Nought(1) or Cross(2). O is empty cell."
 });
@@ -50,6 +43,7 @@ export const PlayerMove = objectType({
   definition(t) {
     t.nonNull.int('id')
     t.nonNull.int('gameId')
+    t.nonNull.int('player')
     t.nonNull.int('moveCell')
     t.nonNull.boolean('allocated', {
       description: "When found with query getPlayerMove as findFirst this is marked true."
@@ -94,8 +88,7 @@ export const TTTMutations = extendType({
     t.nonNull.field('createGame', {
       type: 'Game',
       args: {
-        player: nonNull(intArg()),
-        opponentStart: nonNull(booleanArg()),
+        userId: nonNull(intArg()),
       },
       resolve: createGameResolver
     });
@@ -111,6 +104,7 @@ export const TTTMutations = extendType({
       type: 'PlayerMove',
       args: {
         gameId: nonNull(intArg()),
+        player: nonNull(intArg()),
         moveCell: nonNull(intArg())
       },
       resolve: boardMoveResolver
