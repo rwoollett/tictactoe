@@ -9,10 +9,7 @@ import { PrismaClient } from "@prisma/client";
     }
   });
   await prismaTest.$executeRaw`
-  TRUNCATE TABLE "Task" RESTART IDENTITY CASCADE;
-  `;
-  await prismaTest.$executeRaw`
-  TRUNCATE TABLE "TaskResult" RESTART IDENTITY CASCADE;
+  TRUNCATE TABLE "Game" RESTART IDENTITY CASCADE;
   `;
   
   prismaTest.$disconnect();

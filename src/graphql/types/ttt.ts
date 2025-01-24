@@ -10,8 +10,9 @@ import {
 import { extendType } from 'nexus'
 import { GameUpdateByIdEvent, Subjects } from '../../events';
 import {
-  boardMoveResolver, createGameResolver,
-  getNewBoardResolver, getPlayerMoveResolver,
+  boardMoveResolver,
+  createGameResolver,
+  getPlayerMoveResolver,
   removeGameCompleteResolver,
   serverUpdateBoardResolver,
   subcribeBoardByGameIdResolver
@@ -61,13 +62,14 @@ export const PlayerMove = objectType({
 export const TTTQuery = extendType({
   type: 'Query',
   definition(t) {
-    t.field('getNewBoard', {
-      type: list('Game'),
-      args: {
-        nodeId: nonNull(stringArg()),
-      },
-      resolve: getNewBoardResolver
-    });
+    // NOT REQUIRED
+    // t.field('getNewBoard', {
+    //   type: list('Game'),
+    //   args: {
+    //     nodeId: nonNull(stringArg()),
+    //   },
+    //   resolve: getNewBoardResolver
+    // });
     t.field('getPlayerMove', {
       type: list('PlayerMove'),
       args: {

@@ -92,7 +92,6 @@ export interface NexusGenFieldTypes {
     moveCell: number; // Int!
   }
   Query: { // field return type
-    getNewBoard: Array<NexusGenRootTypes['Game'] | null> | null; // [Game]
     getPlayerMove: Array<NexusGenRootTypes['PlayerMove'] | null> | null; // [PlayerMove]
   }
   RemovalResult: { // field return type
@@ -130,7 +129,6 @@ export interface NexusGenFieldTypeNames {
     moveCell: 'Int'
   }
   Query: { // field return type name
-    getNewBoard: 'Game'
     getPlayerMove: 'PlayerMove'
   }
   RemovalResult: { // field return type name
@@ -160,9 +158,6 @@ export interface NexusGenArgTypes {
     }
   }
   Query: {
-    getNewBoard: { // args
-      nodeId: string; // String!
-    }
     getPlayerMove: { // args
       nodeId: string; // String!
     }

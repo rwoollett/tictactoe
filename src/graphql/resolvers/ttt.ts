@@ -8,7 +8,7 @@ import { Subjects } from "../../events";
  * 
  * The user post a mutation of createGame
  * The id create in game table is used to identify the game to the back end node cstoken workers.
- * The publish the game update to the game id.
+ * The cstoken workers publish the game update to the game id.
  * The return Game data has the id which is needed to subscribe to with board updates.
  * 
  * @returns Game 
@@ -29,7 +29,7 @@ export const createGameResolver: FieldResolver<
     id: newGame.id,
     player,
     opponentStart,
-    allocated: newGame.allocated,
+    allocated: newGame.allocated, // this field in not required for allocation anymore as get this data from moves in the game
     board: newGame.board,
     createdAt: newGame.createdAt ? newGame.createdAt.toISOString() : "",
     playerMoves: []
@@ -47,73 +47,73 @@ export const createGameResolver: FieldResolver<
  *  
  * @returns task 
  */
-export const getNewBoardResolver: FieldResolver<
-  "Query",
-  "getNewBoard"
-> = async (_, { }, { prisma }) => {
+// export const getNewBoardResolver: FieldResolver<
+//   "Query",
+//   "getNewBoard"
+// > = async (_, { }, { prisma }) => {
 
-  try {
-    const game = await prisma.game.findFirst({
-      select: {
-        id: true,
-        allocated: true,
-      },
-      where:
-      {
-        allocated: false
-      },
-    });
+//   try {
+//     const game = await prisma.game.findFirst({
+//       select: {
+//         id: true,
+//         allocated: true,
+//       },
+//       where:
+//       {
+//         allocated: false
+//       },
+//     });
 
-    if (game) {
-      const updateGame = await prisma.game.update({
-        select: {
-          id: true,
-          player: true,
-          opponentStart: true,
-          allocated: true,
-          createdAt: true,
-          board: true,
-          playerMoves: {
-            select: {
-              id: true,
-              gameId: true,
-              moveCell: true,
-              allocated: true
-            }
-          }
-        },
-        data: {
-          allocated: true
-        },
-        where: {
-          id: game.id
-        }
-      });
-      return [{
-        ...updateGame,
-        createdAt: updateGame.createdAt ? updateGame.createdAt.toISOString() : "",
-      }];
-    } else {
-      return [];
-    }
+//     if (game) {
+//       const updateGame = await prisma.game.update({
+//         select: {
+//           id: true,
+//           player: true,
+//           opponentStart: true,
+//           allocated: true,
+//           createdAt: true,
+//           board: true,
+//           playerMoves: {
+//             select: {
+//               id: true,
+//               gameId: true,
+//               moveCell: true,
+//               allocated: true
+//             }
+//           }
+//         },
+//         data: {
+//           allocated: true
+//         },
+//         where: {
+//           id: game.id
+//         }
+//       });
+//       return [{
+//         ...updateGame,
+//         createdAt: updateGame.createdAt ? updateGame.createdAt.toISOString() : "",
+//       }];
+//     } else {
+//       return [];
+//     }
 
-  } catch (error) {
-    if (
-      error instanceof PrismaClientKnownRequestError &&
-      error.code == 'P2025'
-    ) {
-      console.log(
-        '\u001b[1;31m' +
-        'PrismaClientKnownRequestError is catched' +
-        '(Error name: ' +
-        error.name +
-        ')' +
-        '\u001b[0m'
-      );
-    }
-    return [];
-  };
-};
+//   } catch (error) {
+//     if (
+//       error instanceof PrismaClientKnownRequestError &&
+//       error.code == 'P2025'
+//     ) {
+//       console.log(
+//         '\u001b[1;31m' +
+//         'PrismaClientKnownRequestError is catched' +
+//         '(Error name: ' +
+//         error.name +
+//         ')' +
+//         '\u001b[0m'
+//       );
+//     }
+//     return [];
+//   };
+// };
 
 /**
  * Create/Update Board for Game by GameId 
@@ -133,11 +133,11 @@ export const serverUpdateBoardResolver: FieldResolver<
     const game = await prisma.game.findFirst({
       select: {
         id: true,
-        allocated: true,
+      //  allocated: true,
       },
       where:
       {
-        allocated: true,
+      //  allocated: true,
         id: gameId
       },
     });
@@ -161,7 +161,7 @@ export const serverUpdateBoardResolver: FieldResolver<
           }
         },
         data: {
-          allocated: true,
+      //    allocated: true,
           board: board
         },
         where: {

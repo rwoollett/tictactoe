@@ -41,7 +41,6 @@ type PlayerMove {
 }
 
 type Query {
-  getNewBoard(nodeId: String!): [Game]
   getPlayerMove(nodeId: String!): [PlayerMove]
 }
 
