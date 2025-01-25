@@ -141,30 +141,80 @@ export const boardMoveResolver: FieldResolver<
   "Mutation", "boardMove"
 > = async (_, { gameId, player, moveCell }, { prisma }) => {
 
-  const newMove = await prisma.playerMove.create({
-    data: {
-      gameId,
-      player,
-      moveCell
-    },
-    select: {
-      id: true,
-      allocated: true,
-      game: true
-    }
-  });
+  try {
+    const newMove = await prisma.playerMove.create({
+      data: {
+        gameId,
+        player,
+        moveCell
+      },
+      select: {
+        id: true,
+        allocated: true,
+        game: true
+      }
+    });
 
-  return {
-    id: newMove.id,
-    allocated: newMove.allocated,
-    gameId, player, moveCell,
-    game: {
-      id: newMove.game.id,
-      board: newMove.game.board,
-      userId: newMove.game.userId,
-      createdAt: newMove.game.createdAt ? newMove.game.createdAt.toISOString() : ""
+    if (moveCell > 8) {
+      throw new Error(`Player move creation has error in game id: ${gameId}. Could not create record of the players move at ${moveCell}.`);
     }
-  }
+
+    const boardArray = newMove.game.board.split(",");
+    const newBoard = boardArray.slice(0, moveCell)
+      .concat([player.toString()])
+      .concat(boardArray.slice(moveCell + 1))
+      .join(",");
+
+    const game = await prisma.game.findFirst({
+      select: {
+        id: true,
+      },
+      where:
+      {
+        id: gameId
+      },
+    });
+    const updateGame = await prisma.game.update({
+      select: {
+        board: true,
+      },
+      data: {
+        board: newBoard
+      },
+      where: {
+        id: gameId
+      }
+    });
+
+    return {
+      id: newMove.id,
+      allocated: newMove.allocated,
+      gameId, player, moveCell,
+      game: {
+        id: newMove.game.id,
+        board: newBoard,
+        userId: newMove.game.userId,
+        createdAt: newMove.game.createdAt ? newMove.game.createdAt.toISOString() : ""
+      }
+    }
+
+  } catch (error) {
+    if (
+      error instanceof PrismaClientKnownRequestError &&
+      error.code == 'P2025'
+    ) {
+      console.log(
+        '\u001b[1;31m' +
+        'PrismaClientKnownRequestError is catched' +
+        '(Error name: ' +
+        error.name +
+        ')' +
+        '\u001b[0m'
+      );
+    }
+    throw new Error("Mutation boardMove: " + (error as Error).message);
+  };
+
 };
 
 /**
