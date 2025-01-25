@@ -13,6 +13,7 @@ import {
   getPlayerMoveResolver,
   removeGameCompleteResolver,
   serverUpdateBoardResolver,
+  startGameResolver,
   subcribeBoardByGameIdResolver
 } from '../resolvers/ttt';
 import { withFilter } from 'graphql-subscriptions';
@@ -92,6 +93,13 @@ export const TTTMutations = extendType({
         userId: nonNull(intArg()),
       },
       resolve: createGameResolver
+    });
+    t.nonNull.field('startGame', {
+      type: 'Game',
+      args: {
+        gameId: nonNull(intArg()),
+      },
+      resolve: startGameResolver
     });
     t.nonNull.field('serverUpdateBoard', {
       type: 'Game',

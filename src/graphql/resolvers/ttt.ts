@@ -117,6 +117,51 @@ export const serverUpdateBoardResolver: FieldResolver<
 };
 
 /**
+ * Start Game with game id
+ */
+
+export const startGameResolver: FieldResolver<
+  "Mutation", "startGame"
+> = async (_, { gameId }, { prisma, pubsub }) => {
+  try {
+
+    const game = await prisma.game.findFirstOrThrow({
+      select: {
+        id: true,
+        userId: true,
+        board: true,
+        createdAt: true
+      },
+      where: {
+        id: gameId
+      }
+    });
+
+    return {
+      ...game,
+      board: Array(9).fill(0).join(","),
+      createdAt: game.createdAt ? game.createdAt.toISOString() : ""
+    }
+
+  } catch (error) {
+    if (
+      error instanceof PrismaClientKnownRequestError &&
+      error.code == 'P2025'
+    ) {
+      console.log(
+        '\u001b[1;31m' +
+        'PrismaClientKnownRequestError is catched' +
+        '(Error name: ' +
+        error.name +
+        ')' +
+        '\u001b[0m'
+      );
+    }
+    throw new Error("Mutation startGame: " + (error as Error).message);
+  };
+}
+
+/**
  * Subscribe to board updates by game id
  * 
  * @returns Board 

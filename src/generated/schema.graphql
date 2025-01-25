@@ -23,6 +23,7 @@ type Mutation {
   createGame(userId: Int!): Game!
   removeGameComplete(gameId: Int!): RemovalResult!
   serverUpdateBoard(board: String!, gameId: Int!): Game!
+  startGame(gameId: Int!): Game!
 }
 
 """The players moves in the Tic Tac Toe board against oppenent."""

@@ -80,6 +80,7 @@ export interface NexusGenFieldTypes {
     createGame: NexusGenRootTypes['Game']; // Game!
     removeGameComplete: NexusGenRootTypes['RemovalResult']; // RemovalResult!
     serverUpdateBoard: NexusGenRootTypes['Game']; // Game!
+    startGame: NexusGenRootTypes['Game']; // Game!
   }
   PlayerMove: { // field return type
     allocated: boolean; // Boolean!
@@ -116,6 +117,7 @@ export interface NexusGenFieldTypeNames {
     createGame: 'Game'
     removeGameComplete: 'RemovalResult'
     serverUpdateBoard: 'Game'
+    startGame: 'Game'
   }
   PlayerMove: { // field return type name
     allocated: 'Boolean'
@@ -151,6 +153,9 @@ export interface NexusGenArgTypes {
     }
     serverUpdateBoard: { // args
       board: string; // String!
+      gameId: number; // Int!
+    }
+    startGame: { // args
       gameId: number; // Int!
     }
   }
