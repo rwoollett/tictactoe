@@ -106,6 +106,9 @@ export const serverUpdateBoardResolver: FieldResolver<
  * Start Game with game id
  * 
  * return game with empty board of played moves.
+ * This update to board could need changing to be updated by server netp processes.
+ *   - using a record with field allocate, and server netp reading and then processing the clearing of board, then
+ *     publishing the clear with client web app subcribe to UpdateBoard by gameId.
  */
 export const startGameResolver: FieldResolver<
   "Mutation", "startGame"
@@ -113,7 +116,7 @@ export const startGameResolver: FieldResolver<
   try {
     await prisma.game.findFirstOrThrow({ where: { id: gameId } });
 
-    const board = Array(9).fill(0).join(",");
+    const board = Array(9).fill(0).join(","); // This could need changing to be updated by server netp processes rather than a client change to board
     const updateGame = await prisma.game.update({
       select: {
         id: true,
@@ -163,7 +166,7 @@ export const subcribeBoardByGameIdResolver = (payload: GameUpdateByIdEvent) => {
  * 
  * The user post a mutation of boardMove
  * The id create in game table is used to identify the game to the back end node cstoken workers.
- * The publish the game update to the game id.
+ * The server netp client publish the game update to the game id.
  * The return Game data has the id which is needed to subscribe to with board updates.
  * 
  * @returns Game 
@@ -171,14 +174,15 @@ export const subcribeBoardByGameIdResolver = (payload: GameUpdateByIdEvent) => {
 
 export const boardMoveResolver: FieldResolver<
   "Mutation", "boardMove"
-> = async (_, { gameId, player, moveCell }, { prisma }) => {
+> = async (_, { gameId, player, moveCell, isOpponentStart }, { prisma }) => {
 
   try {
     const newMove = await prisma.playerMove.create({
       data: {
         gameId,
         player,
-        moveCell
+        moveCell,
+        isOpponentStart
       },
       select: {
         id: true,
@@ -187,41 +191,10 @@ export const boardMoveResolver: FieldResolver<
       }
     });
 
-    // if (moveCell > 8) {
-    //   throw new Error(`Player move creation has error in game id: ${gameId}. Could not create record of the players move at ${moveCell}.`);
-    // }
-
-    // const boardArray = newMove.game.board.split(",");
-    // const newBoard = boardArray.slice(0, moveCell)
-    //   .concat([player.toString()])
-    //   .concat(boardArray.slice(moveCell + 1))
-    //   .join(",");
-
-    // const game = await prisma.game.findFirst({
-    //   select: {
-    //     id: true,
-    //   },
-    //   where:
-    //   {
-    //     id: gameId
-    //   },
-    // });
-    // const updateGame = await prisma.game.update({
-    //   select: {
-    //     board: true,
-    //   },
-    //   data: {
-    //     board: newBoard
-    //   },
-    //   where: {
-    //     id: gameId
-    //   }
-    // });
-
     return {
       id: newMove.id,
       allocated: newMove.allocated,
-      gameId, player, moveCell,
+      gameId, player, moveCell, isOpponentStart,
       game: {
         id: newMove.game.id,
         board: newMove.game.board,
@@ -262,7 +235,7 @@ export const boardMoveResolver: FieldResolver<
 export const getPlayerMoveResolver: FieldResolver<
   "Query",
   "getPlayerMove"
-> = async (_, { }, { prisma }) => {
+> = async (_, { nodeId }, { prisma }) => {
 
   try {
     const move = await prisma.playerMove.findFirst({
@@ -284,6 +257,7 @@ export const getPlayerMoveResolver: FieldResolver<
           gameId: true,
           player: true,
           moveCell: true,
+          isOpponentStart: true,
           game: {
             select: {
               board: true,

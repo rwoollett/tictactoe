@@ -1,50 +1,48 @@
-mutation CreateGame($player: Int!, $opponentStart: Boolean!) {
-  createGame(player: $player, opponentStart: $opponentStart) {
-    id
-    player
-    opponentStart
-    createdAt
-    allocated
-  }
-}
 
-query GetNewBoard($nodeId: String!) {
-  getNewBoard(nodeId: $nodeId) {
-    allocated
-    createdAt
+mutation CreateNewGame($userId: Int!) {
+  createGame(userId: $userId) {
     id
-    player
+    userId
     board
-    playerMoves {
-      gameId
-    }
+    createdAt
   }
 }
 
-
-mutation BoardMove($gameId: Int!, $moveCell: Int!) {
-  boardMove(gameId: $gameId, moveCell: $moveCell) {
+mutation StartGame($gameId: Int!) {
+  startGame(gameId: $gameId) {
     id
-    gameId
-    moveCell
+    userId
+    board
+    createdAt
+  }
+}
+
+mutation BoardMove($gameId: Int!, $moveCell: Int!, $player: Int!, $isOpponentStart: Boolean!) {
+  boardMove(gameId: $gameId, moveCell: $moveCell, player: $player, isOpponentStart: $isOpponentStart) {
+    id
     allocated
+    gameId
+    player
+    moveCell
+    isOpponentStart
   }
 }
 
 query GetPlayerMove($nodeId: String!) {
   getPlayerMove(nodeId: $nodeId) {
-    gameId
-    moveCell
     allocated
+    gameId
+    id
+    moveCell
+    player
+    game {
+      id,
+      board,
+      userId
+      createdAt
+    }
   }
 }
-
-# mutation ServerCreateBoard($gameId: Int!, $board: String!) {
-#   serverCreateBoard(gameId: $gameId, board: $board) {
-#     id
-#     board
-#   }
-# }
 
 mutation ServerUpdateBoard($gameId: Int!, $board: String!) {
   serverUpdateBoard(gameId: $gameId, board: $board) {
@@ -53,9 +51,9 @@ mutation ServerUpdateBoard($gameId: Int!, $board: String!) {
   }
 }
 
-subscription GameUpdateById {
-  game_Update {
-    gameId
+subscription GameUpdateByGameId($gameId: Int!) {
+  game_Update(gameId: $gameId) {
     board
+    gameId
   }
 }

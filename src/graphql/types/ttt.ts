@@ -1,4 +1,5 @@
 import {
+  booleanArg,
   intArg,
   list,
   nonNull,
@@ -28,10 +29,6 @@ export const Game = objectType({
     t.nonNull.int('userId')
     t.nonNull.string('board')
     t.nonNull.string('createdAt')
-    // t.nonNull.list.field('playerMoves', {
-    //   type: 'PlayerMove',
-    //   description: "The players moves made against oppenent"
-    // })
   },
   description: "Tic Tac Toes game board. The player can play as Nought(1) or Cross(2). O is empty cell."
 });
@@ -46,6 +43,7 @@ export const PlayerMove = objectType({
     t.nonNull.int('gameId')
     t.nonNull.int('player')
     t.nonNull.int('moveCell')
+    t.nonNull.boolean('isOpponentStart')
     t.nonNull.boolean('allocated', {
       description: "When found with query getPlayerMove as findFirst this is marked true."
     })
@@ -58,14 +56,6 @@ export const PlayerMove = objectType({
 export const TTTQuery = extendType({
   type: 'Query',
   definition(t) {
-    // NOT REQUIRED
-    // t.field('getNewBoard', {
-    //   type: list('Game'),
-    //   args: {
-    //     nodeId: nonNull(stringArg()),
-    //   },
-    //   resolve: getNewBoardResolver
-    // });
     t.field('getPlayerMove', {
       type: list('PlayerMove'),
       args: {
@@ -114,7 +104,8 @@ export const TTTMutations = extendType({
       args: {
         gameId: nonNull(intArg()),
         player: nonNull(intArg()),
-        moveCell: nonNull(intArg())
+        moveCell: nonNull(intArg()),
+        isOpponentStart: nonNull(booleanArg())
       },
       resolve: boardMoveResolver
     });
@@ -146,9 +137,6 @@ export const Subscription = extendType({
       args: {
         gameId: nonNull(intArg())
       },
-      // subscribe(_root, _args, ctx) {
-      //   return ctx.pubsub.asyncIterator(Subjects.GameUpdateById)
-      // },
       subscribe: withFilter(
         (_root, _args, ctx) => ctx.pubsub.asyncIterator(Subjects.GameUpdateById),
         (msg: GameUpdateByIdEvent, variables) => {
@@ -161,19 +149,3 @@ export const Subscription = extendType({
 
   },
 });
-
-// export const Subscription = extendType({
-//   type: "Subscription",
-//   definition(t) {
-//     t.field(Subjects.GameUpdateById, {
-//       type: 'BoardOutput',
-//       subscribe(_root, _args, ctx) {
-//         return ctx.pubsub.asyncIterator(Subjects.GameUpdateById)
-//       },
-//       resolve: subcribeBoardByGameIdResolver
-//     });
-
-//   },
-// });
-
-

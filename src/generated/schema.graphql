@@ -19,7 +19,7 @@ type Game {
 }
 
 type Mutation {
-  boardMove(gameId: Int!, moveCell: Int!, player: Int!): PlayerMove!
+  boardMove(gameId: Int!, isOpponentStart: Boolean!, moveCell: Int!, player: Int!): PlayerMove!
   createGame(userId: Int!): Game!
   removeGameComplete(gameId: Int!): RemovalResult!
   serverUpdateBoard(board: String!, gameId: Int!): Game!
@@ -33,6 +33,7 @@ type PlayerMove {
   game: Game!
   gameId: Int!
   id: Int!
+  isOpponentStart: Boolean!
   moveCell: Int!
   player: Int!
 }

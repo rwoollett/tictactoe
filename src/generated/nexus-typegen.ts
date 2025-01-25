@@ -44,6 +44,7 @@ export interface NexusGenObjects {
     game: NexusGenRootTypes['Game']; // Game!
     gameId: number; // Int!
     id: number; // Int!
+    isOpponentStart: boolean; // Boolean!
     moveCell: number; // Int!
     player: number; // Int!
   }
@@ -87,6 +88,7 @@ export interface NexusGenFieldTypes {
     game: NexusGenRootTypes['Game']; // Game!
     gameId: number; // Int!
     id: number; // Int!
+    isOpponentStart: boolean; // Boolean!
     moveCell: number; // Int!
     player: number; // Int!
   }
@@ -124,6 +126,7 @@ export interface NexusGenFieldTypeNames {
     game: 'Game'
     gameId: 'Int'
     id: 'Int'
+    isOpponentStart: 'Boolean'
     moveCell: 'Int'
     player: 'Int'
   }
@@ -142,6 +145,7 @@ export interface NexusGenArgTypes {
   Mutation: {
     boardMove: { // args
       gameId: number; // Int!
+      isOpponentStart: boolean; // Boolean!
       moveCell: number; // Int!
       player: number; // Int!
     }
