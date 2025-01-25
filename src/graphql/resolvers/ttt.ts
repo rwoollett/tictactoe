@@ -187,36 +187,36 @@ export const boardMoveResolver: FieldResolver<
       }
     });
 
-    if (moveCell > 8) {
-      throw new Error(`Player move creation has error in game id: ${gameId}. Could not create record of the players move at ${moveCell}.`);
-    }
+    // if (moveCell > 8) {
+    //   throw new Error(`Player move creation has error in game id: ${gameId}. Could not create record of the players move at ${moveCell}.`);
+    // }
 
-    const boardArray = newMove.game.board.split(",");
-    const newBoard = boardArray.slice(0, moveCell)
-      .concat([player.toString()])
-      .concat(boardArray.slice(moveCell + 1))
-      .join(",");
+    // const boardArray = newMove.game.board.split(",");
+    // const newBoard = boardArray.slice(0, moveCell)
+    //   .concat([player.toString()])
+    //   .concat(boardArray.slice(moveCell + 1))
+    //   .join(",");
 
-    const game = await prisma.game.findFirst({
-      select: {
-        id: true,
-      },
-      where:
-      {
-        id: gameId
-      },
-    });
-    const updateGame = await prisma.game.update({
-      select: {
-        board: true,
-      },
-      data: {
-        board: newBoard
-      },
-      where: {
-        id: gameId
-      }
-    });
+    // const game = await prisma.game.findFirst({
+    //   select: {
+    //     id: true,
+    //   },
+    //   where:
+    //   {
+    //     id: gameId
+    //   },
+    // });
+    // const updateGame = await prisma.game.update({
+    //   select: {
+    //     board: true,
+    //   },
+    //   data: {
+    //     board: newBoard
+    //   },
+    //   where: {
+    //     id: gameId
+    //   }
+    // });
 
     return {
       id: newMove.id,
@@ -224,7 +224,7 @@ export const boardMoveResolver: FieldResolver<
       gameId, player, moveCell,
       game: {
         id: newMove.game.id,
-        board: newBoard,
+        board: newMove.game.board,
         userId: newMove.game.userId,
         createdAt: newMove.game.createdAt ? newMove.game.createdAt.toISOString() : ""
       }
