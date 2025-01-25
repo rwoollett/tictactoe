@@ -18,18 +18,13 @@ export const createGameResolver: FieldResolver<
   "Mutation", "createGame"
 > = async (_, { userId }, { prisma }) => {
 
-  const newGame = await prisma.game.create({
-    data: {
-      userId
-    }
-  });
+  const newGame = await prisma.game.create({ data: { userId } });
 
   return {
     id: newGame.id,
     userId,
     board: newGame.board,
     createdAt: newGame.createdAt ? newGame.createdAt.toISOString() : "",
-    //playerMoves: []
   }
 };
 
@@ -49,16 +44,7 @@ export const serverUpdateBoardResolver: FieldResolver<
 > = async (_, { gameId, board }, { prisma, pubsub }) => {
 
   try {
-    const game = await prisma.game.findFirst({
-      select: {
-        id: true,
-      },
-      where:
-      {
-        id: gameId
-      },
-    });
-
+    const game = await prisma.game.findFirst({ where: { id: gameId } });
     if (game) {
       const updateGame = await prisma.game.update({
         select: {
@@ -118,29 +104,30 @@ export const serverUpdateBoardResolver: FieldResolver<
 
 /**
  * Start Game with game id
+ * 
+ * return game with empty board of played moves.
  */
-
 export const startGameResolver: FieldResolver<
   "Mutation", "startGame"
-> = async (_, { gameId }, { prisma, pubsub }) => {
+> = async (_, { gameId }, { prisma }) => {
   try {
+    await prisma.game.findFirstOrThrow({ where: { id: gameId } });
 
-    const game = await prisma.game.findFirstOrThrow({
+    const board = Array(9).fill(0).join(",");
+    const updateGame = await prisma.game.update({
       select: {
         id: true,
         userId: true,
         board: true,
         createdAt: true
       },
-      where: {
-        id: gameId
-      }
+      where: { id: gameId },
+      data: { board }
     });
 
     return {
-      ...game,
-      board: Array(9).fill(0).join(","),
-      createdAt: game.createdAt ? game.createdAt.toISOString() : ""
+      ...updateGame, board,
+      createdAt: updateGame.createdAt ? updateGame.createdAt.toISOString() : ""
     }
 
   } catch (error) {
@@ -282,10 +269,6 @@ export const getPlayerMoveResolver: FieldResolver<
       select: {
         id: true,
         allocated: true
-        // gameId: true,
-        // player: true,
-        // moveCell: true,
-        // game: true
       },
       where:
       {
@@ -349,18 +332,7 @@ export const getPlayerMoveResolver: FieldResolver<
 export const removeGameCompleteResolver: FieldResolver<
   "Mutation", "removeGameComplete"
 > = async (_, { gameId }, { prisma }) => {
-
-  const removeMany = await prisma.game.deleteMany({
-    where: {
-      id: gameId
-    }
-  });
-
-  const removeManyResult = await prisma.playerMove.deleteMany({
-    where: {
-      gameId: gameId
-    }
-  });
-
+  const removeMany = await prisma.game.deleteMany({ where: { id: gameId } });
+  const removeManyResult = await prisma.playerMove.deleteMany({ where: { gameId: gameId } });
   return { message: `Removed ${removeMany.count + removeManyResult.count} records successfully` };
 };
