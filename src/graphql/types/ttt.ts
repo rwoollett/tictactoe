@@ -95,7 +95,8 @@ export const TTTMutations = extendType({
       type: 'Game',
       args: {
         gameId: nonNull(intArg()),
-        board: nonNull(stringArg())
+        board: nonNull(stringArg()),
+        result: nonNull(stringArg())
       },
       resolve: serverUpdateBoardResolver
     });
@@ -125,6 +126,7 @@ export const BoardOutput = objectType({
   definition(t) {
     t.nonNull.int('gameId')
     t.nonNull.string('board')
+    t.nonNull.string('result')
   },
   description: "A board update of tictactoe"
 });

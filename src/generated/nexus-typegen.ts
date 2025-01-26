@@ -158,6 +158,7 @@ export interface NexusGenArgTypes {
     serverUpdateBoard: { // args
       board: string; // String!
       gameId: number; // Int!
+      result: string; // String!
     }
     startGame: { // args
       gameId: number; // Int!

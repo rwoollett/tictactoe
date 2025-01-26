@@ -44,10 +44,11 @@ query GetPlayerMove($nodeId: String!) {
   }
 }
 
-mutation ServerUpdateBoard($gameId: Int!, $board: String!) {
-  serverUpdateBoard(gameId: $gameId, board: $board) {
+mutation ServerUpdateBoard($gameId: Int!, $board: String!, $result: String!) {
+  serverUpdateBoard(gameId: $gameId, board: $board, result: $result) {
     id
     board
+    result
   }
 }
 
@@ -55,5 +56,6 @@ subscription GameUpdateByGameId($gameId: Int!) {
   game_Update(gameId: $gameId) {
     board
     gameId
+    result
   }
 }

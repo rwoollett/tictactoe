@@ -22,7 +22,7 @@ type Mutation {
   boardMove(gameId: Int!, isOpponentStart: Boolean!, moveCell: Int!, player: Int!): PlayerMove!
   createGame(userId: Int!): Game!
   removeGameComplete(gameId: Int!): RemovalResult!
-  serverUpdateBoard(board: String!, gameId: Int!): Game!
+  serverUpdateBoard(board: String!, gameId: Int!, result: String!): Game!
   startGame(gameId: Int!): Game!
 }
 

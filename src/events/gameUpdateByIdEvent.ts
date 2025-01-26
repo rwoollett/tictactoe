@@ -5,6 +5,7 @@ export interface GameUpdateByIdEvent {
   data: {
     gameId: number;
     board: string;
+    result: string;
   };
 }
 

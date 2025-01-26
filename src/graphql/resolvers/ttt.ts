@@ -41,7 +41,7 @@ export const createGameResolver: FieldResolver<
 
 export const serverUpdateBoardResolver: FieldResolver<
   "Mutation", "serverUpdateBoard"
-> = async (_, { gameId, board }, { prisma, pubsub }) => {
+> = async (_, { gameId, board, result }, { prisma, pubsub }) => {
 
   try {
     const game = await prisma.game.findFirst({ where: { id: gameId } });
@@ -73,7 +73,7 @@ export const serverUpdateBoardResolver: FieldResolver<
       pubsub && pubsub.publish(Subjects.GameUpdateById,
         {
           subject: Subjects.GameUpdateById,
-          data: { gameId, board }
+          data: { gameId, board, result }
         } as GameUpdateByIdEvent);
 
       return {
@@ -157,8 +157,8 @@ export const startGameResolver: FieldResolver<
  * @returns Board 
  */
 export const subcribeBoardByGameIdResolver = (payload: GameUpdateByIdEvent) => {
-  const { data: { gameId, board } } = payload;
-  return { gameId, board };
+  const { data: { gameId, board, result } } = payload;
+  return { gameId, board, result };
 };
 
 /**
