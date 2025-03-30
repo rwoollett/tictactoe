@@ -140,11 +140,10 @@ export const Subscription = extendType({
         gameId: nonNull(intArg())
       },
       subscribe: withFilter(
-        (_root, _args, ctx) => ctx.pubsub.asyncIterator(Subjects.GameUpdateById),
-        (msg: GameUpdateByIdEvent, variables) => {
-          return (
-            msg.data.gameId === variables.gameId
-          );
+        (_root, _args, ctx) => ctx?.pubsub?.asyncIterableIterator(Subjects.GameUpdateById) ?? [],
+        (msg: object | undefined, variables) => {
+          const event = msg as GameUpdateByIdEvent | undefined;
+          return event?.data?.gameId === variables?.gameId;
         }),
       resolve: subcribeBoardByGameIdResolver
     });
