@@ -6,6 +6,7 @@
 type BoardOutput {
   board: String!
   gameId: Int!
+  result: String!
 }
 
 """

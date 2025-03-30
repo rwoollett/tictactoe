@@ -4,7 +4,7 @@ import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHt
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import express from 'express';
-import { useServer } from 'graphql-ws/lib/use/ws';
+import { useServer } from 'graphql-ws/use/ws';
 import { createServer } from 'http';
 import { WebSocketServer } from 'ws';
 import { Context } from './context';

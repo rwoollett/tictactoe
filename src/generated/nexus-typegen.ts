@@ -31,6 +31,7 @@ export interface NexusGenObjects {
   BoardOutput: { // root type
     board: string; // String!
     gameId: number; // Int!
+    result: string; // String!
   }
   Game: { // root type
     board: string; // String!
@@ -69,6 +70,7 @@ export interface NexusGenFieldTypes {
   BoardOutput: { // field return type
     board: string; // String!
     gameId: number; // Int!
+    result: string; // String!
   }
   Game: { // field return type
     board: string; // String!
@@ -107,6 +109,7 @@ export interface NexusGenFieldTypeNames {
   BoardOutput: { // field return type name
     board: 'String'
     gameId: 'Int'
+    result: 'String'
   }
   Game: { // field return type name
     board: 'String'
