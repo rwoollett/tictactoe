@@ -2,6 +2,7 @@ import { FieldResolver } from "nexus";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { GameUpdateByIdEvent } from "../../events/gameUpdateByIdEvent";
 import { Subjects } from "../../events";
+import { awakeNetCS } from "../../lib/echoNet";
 
 /**
  * Create New Game 
@@ -19,6 +20,9 @@ export const createGameResolver: FieldResolver<
 > = async (_, { userId }, { prisma }) => {
 
   const newGame = await prisma.game.create({ data: { userId } });
+
+  // ping/echo to netp clientcs ranges a game is started .
+  awakeNetCS();
 
   return {
     id: newGame.id,
