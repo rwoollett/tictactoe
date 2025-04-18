@@ -28,6 +28,11 @@ export interface NexusGenScalars {
 }
 
 export interface NexusGenObjects {
+  BoardCreated: { // root type
+    board: string; // String!
+    createdAt: string; // String!
+    gameId: number; // Int!
+  }
   BoardOutput: { // root type
     board: string; // String!
     gameId: number; // Int!
@@ -67,6 +72,11 @@ export type NexusGenRootTypes = NexusGenObjects
 export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars
 
 export interface NexusGenFieldTypes {
+  BoardCreated: { // field return type
+    board: string; // String!
+    createdAt: string; // String!
+    gameId: number; // Int!
+  }
   BoardOutput: { // field return type
     board: string; // String!
     gameId: number; // Int!
@@ -101,11 +111,17 @@ export interface NexusGenFieldTypes {
     message: string; // String!
   }
   Subscription: { // field return type
+    game_Create: NexusGenRootTypes['BoardCreated'] | null; // BoardCreated
     game_Update: NexusGenRootTypes['BoardOutput'] | null; // BoardOutput
   }
 }
 
 export interface NexusGenFieldTypeNames {
+  BoardCreated: { // field return type name
+    board: 'String'
+    createdAt: 'String'
+    gameId: 'Int'
+  }
   BoardOutput: { // field return type name
     board: 'String'
     gameId: 'Int'
@@ -140,6 +156,7 @@ export interface NexusGenFieldTypeNames {
     message: 'String'
   }
   Subscription: { // field return type name
+    game_Create: 'BoardCreated'
     game_Update: 'BoardOutput'
   }
 }
@@ -173,6 +190,9 @@ export interface NexusGenArgTypes {
     }
   }
   Subscription: {
+    game_Create: { // args
+      isCreate: boolean; // Boolean!
+    }
     game_Update: { // args
       gameId: number; // Int!
     }

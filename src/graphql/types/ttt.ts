@@ -15,7 +15,8 @@ import {
   removeGameCompleteResolver,
   serverUpdateBoardResolver,
   startGameResolver,
-  subcribeBoardByGameIdResolver
+  subcribeBoardByGameIdResolver,
+  subcribeBoardCreateResolver
 } from '../resolvers/ttt';
 import { withFilter } from 'graphql-subscriptions';
 
@@ -47,7 +48,7 @@ export const PlayerMove = objectType({
     t.nonNull.boolean('allocated', {
       description: "When found with query getPlayerMove as findFirst this is marked true."
     })
-    t.nonNull.field('game', { type: 'Game'})
+    t.nonNull.field('game', { type: 'Game' })
   },
   description: "The players moves in the Tic Tac Toe board against oppenent."
 })
@@ -121,6 +122,16 @@ export const TTTMutations = extendType({
   },
 })
 
+export const BoardCreated = objectType({
+  name: 'BoardCreated',
+  definition(t) {
+    t.nonNull.int('gameId')
+    t.nonNull.string('board')
+    t.nonNull.string('createdAt')
+  },
+  description: "A board is created of tictactoe"
+});
+
 export const BoardOutput = objectType({
   name: 'BoardOutput',
   definition(t) {
@@ -146,6 +157,16 @@ export const Subscription = extendType({
           return event?.data?.gameId === variables?.gameId;
         }),
       resolve: subcribeBoardByGameIdResolver
+    });
+    t.field(Subjects.GameCreate, {
+      type: 'BoardCreated',
+      args: {
+        isCreate: nonNull(booleanArg())
+      },
+      subscribe(_root, _args, ctx) {
+        return ctx?.pubsub?.asyncIterableIterator(Subjects.GameCreate);
+      },
+      resolve: subcribeBoardCreateResolver
     });
 
   },

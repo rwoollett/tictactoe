@@ -1,8 +1,6 @@
 import { FieldResolver } from "nexus";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
-import { GameUpdateByIdEvent } from "../../events/gameUpdateByIdEvent";
-import { Subjects } from "../../events";
-import { awakeNetCS } from "../../lib/echoNet";
+import { Subjects, GameCreateEvent, GameUpdateByIdEvent } from "../../events";
 
 /**
  * Create New Game 
@@ -17,12 +15,20 @@ import { awakeNetCS } from "../../lib/echoNet";
 
 export const createGameResolver: FieldResolver<
   "Mutation", "createGame"
-> = async (_, { userId }, { prisma }) => {
+> = async (_, { userId }, { prisma, pubsub }) => {
 
   const newGame = await prisma.game.create({ data: { userId } });
 
-  // ping/echo to netp clientcs ranges a game is started .
-  awakeNetCS();
+  // publish a createGame event
+  pubsub && pubsub.publish(Subjects.GameCreate,
+    {
+      subject: Subjects.GameCreate,
+      data: {
+        gameId: newGame.id,
+        board: newGame.board,
+        createdAt: newGame.createdAt ? newGame.createdAt.toISOString() : ""
+      }
+    } as GameCreateEvent);
 
   return {
     id: newGame.id,
@@ -116,7 +122,7 @@ export const serverUpdateBoardResolver: FieldResolver<
  */
 export const startGameResolver: FieldResolver<
   "Mutation", "startGame"
-> = async (_, { gameId }, { prisma }) => {
+> = async (_, { gameId }, { prisma, pubsub }) => {
   try {
     await prisma.game.findFirstOrThrow({ where: { id: gameId } });
 
@@ -132,6 +138,16 @@ export const startGameResolver: FieldResolver<
       data: { board }
     });
 
+    pubsub && pubsub.publish(Subjects.GameCreate,
+      {
+        subject: Subjects.GameCreate,
+        data: {
+          gameId: updateGame.id,
+          board: updateGame.board,
+          createdAt: updateGame.createdAt ? updateGame.createdAt.toISOString() : ""
+        }
+      } as GameCreateEvent);
+  
     return {
       ...updateGame, board,
       createdAt: updateGame.createdAt ? updateGame.createdAt.toISOString() : ""
@@ -156,9 +172,19 @@ export const startGameResolver: FieldResolver<
 }
 
 /**
+ * Subscribe to board created
+ * 
+ * @returns BoardCreated 
+ */
+export const subcribeBoardCreateResolver = (payload: GameCreateEvent) => {
+  const { data: { gameId, board, createdAt } } = payload;
+  return { gameId, board, createdAt };
+};
+
+/**
  * Subscribe to board updates by game id
  * 
- * @returns Board 
+ * @returns BoardOutput 
  */
 export const subcribeBoardByGameIdResolver = (payload: GameUpdateByIdEvent) => {
   const { data: { gameId, board, result } } = payload;
