@@ -147,7 +147,7 @@ export const startGameResolver: FieldResolver<
           createdAt: updateGame.createdAt ? updateGame.createdAt.toISOString() : ""
         }
       } as GameCreateEvent);
-  
+
     return {
       ...updateGame, board,
       createdAt: updateGame.createdAt ? updateGame.createdAt.toISOString() : ""
@@ -177,8 +177,12 @@ export const startGameResolver: FieldResolver<
  * @returns BoardCreated 
  */
 export const subcribeBoardCreateResolver = (payload: GameCreateEvent) => {
-  const { data: { gameId, board, createdAt } } = payload;
-  return { gameId, board, createdAt };
+  if (!payload) {
+    return { gameId: -1, board: "", createdAt: "" };
+  } else {
+    const { data: { gameId, board, createdAt } } = payload;
+    return { gameId, board, createdAt };
+  }
 };
 
 /**
