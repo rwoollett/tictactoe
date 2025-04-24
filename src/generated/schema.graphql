@@ -9,6 +9,14 @@ type BoardCreated {
   gameId: Int!
 }
 
+"""A player makes a board move event"""
+type BoardMove {
+  gameId: Int!
+  isOpponentStart: Boolean!
+  moveCell: Int!
+  player: Int!
+}
+
 """A board update of tictactoe"""
 type BoardOutput {
   board: String!
@@ -58,4 +66,5 @@ type RemovalResult {
 type Subscription {
   game_Create(isCreate: Boolean!): BoardCreated
   game_Update(gameId: Int!): BoardOutput
+  player_Move(gameId: Int!): BoardMove
 }

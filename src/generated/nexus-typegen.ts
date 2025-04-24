@@ -33,6 +33,12 @@ export interface NexusGenObjects {
     createdAt: string; // String!
     gameId: number; // Int!
   }
+  BoardMove: { // root type
+    gameId: number; // Int!
+    isOpponentStart: boolean; // Boolean!
+    moveCell: number; // Int!
+    player: number; // Int!
+  }
   BoardOutput: { // root type
     board: string; // String!
     gameId: number; // Int!
@@ -77,6 +83,12 @@ export interface NexusGenFieldTypes {
     createdAt: string; // String!
     gameId: number; // Int!
   }
+  BoardMove: { // field return type
+    gameId: number; // Int!
+    isOpponentStart: boolean; // Boolean!
+    moveCell: number; // Int!
+    player: number; // Int!
+  }
   BoardOutput: { // field return type
     board: string; // String!
     gameId: number; // Int!
@@ -113,6 +125,7 @@ export interface NexusGenFieldTypes {
   Subscription: { // field return type
     game_Create: NexusGenRootTypes['BoardCreated'] | null; // BoardCreated
     game_Update: NexusGenRootTypes['BoardOutput'] | null; // BoardOutput
+    player_Move: NexusGenRootTypes['BoardMove'] | null; // BoardMove
   }
 }
 
@@ -121,6 +134,12 @@ export interface NexusGenFieldTypeNames {
     board: 'String'
     createdAt: 'String'
     gameId: 'Int'
+  }
+  BoardMove: { // field return type name
+    gameId: 'Int'
+    isOpponentStart: 'Boolean'
+    moveCell: 'Int'
+    player: 'Int'
   }
   BoardOutput: { // field return type name
     board: 'String'
@@ -158,6 +177,7 @@ export interface NexusGenFieldTypeNames {
   Subscription: { // field return type name
     game_Create: 'BoardCreated'
     game_Update: 'BoardOutput'
+    player_Move: 'BoardMove'
   }
 }
 
@@ -194,6 +214,9 @@ export interface NexusGenArgTypes {
       isCreate: boolean; // Boolean!
     }
     game_Update: { // args
+      gameId: number; // Int!
+    }
+    player_Move: { // args
       gameId: number; // Int!
     }
   }

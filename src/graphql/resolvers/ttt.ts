@@ -1,6 +1,6 @@
 import { FieldResolver } from "nexus";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
-import { Subjects, GameCreateEvent, GameUpdateByIdEvent } from "../../events";
+import { Subjects, GameCreateEvent, GameUpdateByIdEvent, PlayerMoveEvent } from "../../events";
 
 /**
  * Create New Game 
@@ -148,6 +148,7 @@ export const startGameResolver: FieldResolver<
         }
       } as GameCreateEvent);
 
+
     return {
       ...updateGame, board,
       createdAt: updateGame.createdAt ? updateGame.createdAt.toISOString() : ""
@@ -208,7 +209,7 @@ export const subcribeBoardByGameIdResolver = (payload: GameUpdateByIdEvent) => {
 
 export const boardMoveResolver: FieldResolver<
   "Mutation", "boardMove"
-> = async (_, { gameId, player, moveCell, isOpponentStart }, { prisma }) => {
+> = async (_, { gameId, player, moveCell, isOpponentStart }, { prisma, pubsub }) => {
 
   try {
     const newMove = await prisma.playerMove.create({
@@ -224,6 +225,18 @@ export const boardMoveResolver: FieldResolver<
         game: true
       }
     });
+
+    // publish a createGame event
+    pubsub && pubsub.publish(Subjects.PlayerMove,
+      {
+        subject: Subjects.PlayerMove,
+        data: {
+          gameId,
+          player,
+          moveCell,
+          isOpponentStart
+        }
+      } as PlayerMoveEvent);
 
     return {
       id: newMove.id,
@@ -254,6 +267,16 @@ export const boardMoveResolver: FieldResolver<
     throw new Error("Mutation boardMove: " + (error as Error).message);
   };
 
+};
+
+/**
+ * Subscribe to board moves 
+ *  
+ * @returns BoardMove 
+ */
+export const subcribeBoardMoveResolver = (payload: PlayerMoveEvent) => {
+  const { data: { gameId, player, moveCell, isOpponentStart } } = payload;
+  return { gameId, player, moveCell, isOpponentStart };
 };
 
 /**

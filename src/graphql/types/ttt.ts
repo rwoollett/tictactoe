@@ -16,7 +16,8 @@ import {
   serverUpdateBoardResolver,
   startGameResolver,
   subcribeBoardByGameIdResolver,
-  subcribeBoardCreateResolver
+  subcribeBoardCreateResolver,
+  subcribeBoardMoveResolver
 } from '../resolvers/ttt';
 import { withFilter } from 'graphql-subscriptions';
 
@@ -142,6 +143,17 @@ export const BoardOutput = objectType({
   description: "A board update of tictactoe"
 });
 
+export const BoardMove = objectType({
+  name: 'BoardMove',
+  definition(t) {
+    t.nonNull.int('gameId')
+    t.nonNull.int('player')
+    t.nonNull.int('moveCell')
+    t.nonNull.boolean('isOpponentStart')
+  },
+  description: "A player makes a board move event"
+});
+
 export const Subscription = extendType({
   type: "Subscription",
   definition(t) {
@@ -167,6 +179,16 @@ export const Subscription = extendType({
         return ctx?.pubsub?.asyncIterableIterator(Subjects.GameCreate);
       },
       resolve: subcribeBoardCreateResolver
+    });
+    t.field(Subjects.PlayerMove, {
+      type: 'BoardMove',
+      args: {
+        gameId: nonNull(intArg())
+      },
+      subscribe(_root, _args, ctx) {
+        return ctx?.pubsub?.asyncIterableIterator(Subjects.PlayerMove);
+      },
+      resolve: subcribeBoardMoveResolver
     });
 
   },
