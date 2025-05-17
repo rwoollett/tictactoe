@@ -231,6 +231,7 @@ export const boardMoveResolver: FieldResolver<
       {
         subject: Subjects.PlayerMove,
         data: {
+          id: newMove.id,
           gameId,
           player,
           moveCell,
@@ -275,8 +276,8 @@ export const boardMoveResolver: FieldResolver<
  * @returns BoardMove 
  */
 export const subcribeBoardMoveResolver = (payload: PlayerMoveEvent) => {
-  const { data: { gameId, player, moveCell, isOpponentStart } } = payload;
-  return { gameId, player, moveCell, isOpponentStart };
+  const { data: { id: moveId, gameId, player, moveCell, isOpponentStart } } = payload;
+  return { moveId, gameId, player, moveCell, isOpponentStart };
 };
 
 /**

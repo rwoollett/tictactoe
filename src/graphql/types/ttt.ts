@@ -146,6 +146,7 @@ export const BoardOutput = objectType({
 export const BoardMove = objectType({
   name: 'BoardMove',
   definition(t) {
+    t.nonNull.int('moveId')
     t.nonNull.int('gameId')
     t.nonNull.int('player')
     t.nonNull.int('moveCell')
