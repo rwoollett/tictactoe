@@ -37,6 +37,7 @@ export interface NexusGenObjects {
     gameId: number; // Int!
     isOpponentStart: boolean; // Boolean!
     moveCell: number; // Int!
+    moveId: number; // Int!
     player: number; // Int!
   }
   BoardOutput: { // root type
@@ -87,6 +88,7 @@ export interface NexusGenFieldTypes {
     gameId: number; // Int!
     isOpponentStart: boolean; // Boolean!
     moveCell: number; // Int!
+    moveId: number; // Int!
     player: number; // Int!
   }
   BoardOutput: { // field return type
@@ -139,6 +141,7 @@ export interface NexusGenFieldTypeNames {
     gameId: 'Int'
     isOpponentStart: 'Boolean'
     moveCell: 'Int'
+    moveId: 'Int'
     player: 'Int'
   }
   BoardOutput: { // field return type name

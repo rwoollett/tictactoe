@@ -54,7 +54,6 @@ export const PlayerMove = objectType({
   description: "The players moves in the Tic Tac Toe board against oppenent."
 })
 
-
 export const TTTQuery = extendType({
   type: 'Query',
   definition(t) {
